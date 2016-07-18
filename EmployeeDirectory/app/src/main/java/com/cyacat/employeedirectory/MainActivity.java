@@ -22,6 +22,7 @@ import com.cyacat.employeedirectory.database.DbHelper;
 import com.cyacat.employeedirectory.model.Employee;
 import com.google.common.base.Strings;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final Employee employee = (Employee)parent.getItemAtPosition(position);
-                String name = employee.get_firstName() + " " + employee.get_lastName();
+                final String name = employee.get_firstName() + " " + employee.get_lastName();
                 AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
                         .setMessage("Do you want to delete \"" + name + "\"")
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
@@ -73,6 +74,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             public void onClick(DialogInterface dialog, int which) {
                                 try {
                                     _dbHelper.delete(employee, Employee.class);
+                                    File file = new File(AppContext.get_photoDirectory(), employee.get_photoFileName());
+                                    if (file.exists()) {
+                                        file.delete();
+                                    }
+                                    Snackbar.make(findViewById(R.id.mainLayout), name + " deleted successfully", Snackbar.LENGTH_SHORT).show();
+
+                                    searchEmployees(null);
                                 } catch (SQLException e) {
                                     final Snackbar snackbar = Snackbar.make(findViewById(R.id.mainLayout), "Error encountered while deleting employee", Snackbar.LENGTH_LONG);
                                     snackbar.setAction("Dismiss", new View.OnClickListener() {
@@ -83,6 +91,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                                     });
                                     snackbar.show();
                                 }
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
                             }
                         })
                         .create();

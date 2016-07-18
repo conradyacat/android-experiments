@@ -33,7 +33,8 @@
         <activity
             android:name=".EmployeeDetailActivity"
             android:label="@string/title_activity_employee_detail"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
