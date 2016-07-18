@@ -17,7 +17,7 @@ public class Employee {
     public static final String PHOTO_FILENAME = "photo_filename";
 
     @DatabaseField(generatedId = true, columnName = ID)
-    private int _id;
+    private long _id;
 
     @DatabaseField(columnName = FIRST_NAME)
     private String _firstName;
@@ -40,11 +40,11 @@ public class Employee {
     @DatabaseField(columnName = PHOTO_FILENAME)
     private String _photoFileName;
 
-    public int get_id() {
+    public long get_id() {
         return _id;
     }
 
-    public void set_id(int _id) {
+    public void set_id(long _id) {
         this._id = _id;
     }
 

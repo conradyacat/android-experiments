@@ -44,13 +44,19 @@ public class DbHelper extends OrmLiteSqliteOpenHelper {
         Log.v(DbHelper.class.getName(), "Upgrading db");
     }
 
+    public <T, ID> T get(ID id, Class<T> clazzEntity, Class<ID> clazzID) throws SQLException {
+        Dao<T, ID> dao = getDao(clazzEntity);
+        T entity = dao.queryForId(id);
+        return entity;
+    }
+
     public <T> List<T> getAll(Class<T> clazz) throws SQLException {
         Dao<T, ?> dao = getDao(clazz);
         List<T> entities = dao.queryForAll();
         return entities;
     }
 
-    private <T> List<T> getAll(Class<T> clazz, PreparedQueryFunc<T> preparedQueryFuncfunc) throws SQLException {
+    private <T> List<T> getAll(PreparedQueryFunc<T> preparedQueryFuncfunc, Class<T> clazz) throws SQLException {
         Dao<T, ?> dao = getDao(clazz);
         PreparedQuery<T> preparedQuery = preparedQueryFuncfunc.get(dao);
         List<T> entities = dao.query(preparedQuery);
@@ -85,7 +91,7 @@ public class DbHelper extends OrmLiteSqliteOpenHelper {
                     return qb.prepare();
                 }
             };
-            employees = getAll(Employee.class, func);
+            employees = getAll(func, Employee.class);
         }
 
         return employees;

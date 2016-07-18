@@ -42,7 +42,8 @@ public class EmployeeListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;
+        Employee employee = _employees.get(position);
+        return (employee != null) ? employee.get_id() : -1;
     }
 
     @Override

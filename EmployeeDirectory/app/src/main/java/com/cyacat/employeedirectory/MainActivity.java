@@ -1,18 +1,22 @@
 package com.cyacat.employeedirectory;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.cyacat.employeedirectory.adapter.EmployeeListAdapter;
 import com.cyacat.employeedirectory.config.AppContext;
+import com.cyacat.employeedirectory.constant.IntentExtraKey;
 import com.cyacat.employeedirectory.constant.RequestCode;
 import com.cyacat.employeedirectory.database.DbHelper;
 import com.cyacat.employeedirectory.model.Employee;
@@ -23,6 +27,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
+    private ListView _listViewEmployees;
     private DbHelper _dbHelper;
 
     @Override
@@ -46,6 +51,46 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
+        _listViewEmployees = (ListView) findViewById(R.id.listViewEmployees);
+        _listViewEmployees.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent detailIntent = new Intent(MainActivity.this, EmployeeDetailActivity.class);
+                detailIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                detailIntent.putExtra(IntentExtraKey.EMPLOYEE_ID, id);
+                startActivity(detailIntent);
+            }
+        });
+        _listViewEmployees.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Employee employee = (Employee)parent.getItemAtPosition(position);
+                String name = employee.get_firstName() + " " + employee.get_lastName();
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setMessage("Do you want to delete \"" + name + "\"")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    _dbHelper.delete(employee, Employee.class);
+                                } catch (SQLException e) {
+                                    final Snackbar snackbar = Snackbar.make(findViewById(R.id.mainLayout), "Error encountered while deleting employee", Snackbar.LENGTH_LONG);
+                                    snackbar.setAction("Dismiss", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            snackbar.dismiss();
+                                        }
+                                    });
+                                    snackbar.show();
+                                }
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+                return true;
+            }
+        });
+
         searchEmployees(null);
     }
 
@@ -57,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             } else {
                 employees = _dbHelper.getEmployees(keyword);
             }
-            ListView listViewEmployees = (ListView) findViewById(R.id.listViewEmployees);
-            listViewEmployees.setAdapter(new EmployeeListAdapter(this, employees));
+
+            _listViewEmployees.setAdapter(new EmployeeListAdapter(this, employees));
         } catch (SQLException e) {
             final Snackbar snackbar = Snackbar.make(findViewById(R.id.mainLayout), "Error encountered while loading employees", Snackbar.LENGTH_LONG);
             snackbar.setAction("Dismiss", new View.OnClickListener() {
