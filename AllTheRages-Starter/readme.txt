@@ -1,0 +1,1 @@
+Followed a step by step tutorial from https://www.raywenderlich.com/117838/introduction-to-android-fragments-tutorial
