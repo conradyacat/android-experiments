@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewEmployeeActivity"
+            android:name=".EmployeeNewActivity"
             android:label="@string/title_activity_new_employee"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

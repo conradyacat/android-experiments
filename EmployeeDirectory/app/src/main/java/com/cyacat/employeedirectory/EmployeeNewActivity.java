@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.cyacat.employeedirectory.config.AppContext;
+import com.cyacat.employeedirectory.constant.IntentExtraKey;
 import com.cyacat.employeedirectory.constant.RequestCode;
 import com.cyacat.employeedirectory.database.DbHelper;
 import com.cyacat.employeedirectory.model.Employee;
@@ -24,7 +25,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class NewEmployeeActivity extends AppCompatActivity {
+public class EmployeeNewActivity extends AppCompatActivity {
 
     private DbHelper _dbHelper;
     private String _filePath;
@@ -75,7 +76,8 @@ public class NewEmployeeActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case RequestCode.CAPTURE_IMAGE:
-                _photoButton.setImageURI(Uri.fromFile(new File(_filePath)));
+                if (requestCode == RESULT_OK)
+                    _photoButton.setImageURI(Uri.fromFile(new File(_filePath)));
                 break;
         }
     }
